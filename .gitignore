@@ -1,0 +1,7 @@
+node_modules/
+dist/
+pkg/src/
+pkg/pkg/
+pkg/*.tar.*
+raycast-env.d.ts
+vicinae-env.d.ts

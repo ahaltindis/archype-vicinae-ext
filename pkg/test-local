@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# Builds the extension and installs it with the real PKGBUILD, the same way the AUR package will,
+# except that the release tarball comes from this working tree instead of GitHub.
+# Usage: pkg/test-local
+
+set -euo pipefail
+
+root=$(cd "$(dirname "$0")/.." && pwd)
+pkgname=archype-vicinae-ext
+pkgver=$(sed -n 's/^pkgver=//p' "$root/pkg/PKGBUILD")
+tarball=$pkgname-$pkgver.tar.gz
+
+# vicinae creates an empty extensions/archype/assets in ~/.local/share whenever a command runs, even
+# for an extension in /usr/share; those empty folders are harmless. A real copy there (from npm run dev
+# or a plain build) hides the one in /usr/share.
+local_copy=~/.local/share/vicinae/extensions/archype
+rmdir "$local_copy/assets" "$local_copy" 2>/dev/null || true
+if [[ -e $local_copy/package.json ]]; then
+  echo "Remove $local_copy first, it hides the installed package" >&2
+  exit 1
+fi
+
+cd "$root"
+rm -rf dist
+npm run build -- --out dist/archype
+tar -czf "pkg/$tarball" -C dist archype
+
+build=$(mktemp -d)
+trap 'rm -rf "$build"' EXIT
+cp "pkg/$tarball" pkg/$pkgname.install "$build/"
+sed "s|^source=.*|source=(\"$tarball\")|" pkg/PKGBUILD >"$build/PKGBUILD"
+
+cd "$build"
+makepkg -si --noconfirm
