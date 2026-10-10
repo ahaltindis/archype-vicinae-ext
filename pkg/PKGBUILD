@@ -1,6 +1,6 @@
 # Maintainer: Ahmet Altindis
 pkgname=archype-vicinae-ext
-pkgver=0.1.0
+pkgver=0.1.1
 pkgrel=1
 pkgdesc="Vicinae commands for Archype (Brave links with containers)"
 arch=(any)

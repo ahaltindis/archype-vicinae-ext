@@ -1,10 +1,12 @@
 {
 	"$schema": "https://raw.githubusercontent.com/vicinaehq/vicinae/refs/heads/main/extra/schemas/extension.json",
 	"name": "archype",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"title": "Archype",
 	"description": "Vicinae commands for Archype",
-	"categories": ["Productivity"],
+	"categories": [
+		"Productivity"
+	],
 	"license": "MIT",
 	"author": "ahaltindis",
 	"icon": "icon.png",
