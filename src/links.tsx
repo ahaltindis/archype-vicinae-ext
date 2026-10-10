@@ -3,8 +3,10 @@ import {
 	ActionPanel,
 	closeMainWindow,
 	Icon,
+	Keyboard,
 	List,
 	PopToRootType,
+	runInTerminal,
 	showToast,
 	Toast,
 } from "@vicinae/api";
@@ -82,6 +84,15 @@ async function launch(args: string[]) {
 	}
 }
 
+async function editConfig() {
+	await runInTerminal([process.env.EDITOR || "nvim", CONFIG]);
+	await closeMainWindow({ clearRootSearch: true, popToRootType: PopToRootType.Immediate });
+}
+
+const EditAction = () => (
+	<Action title="Edit Links" icon={Icon.Pencil} shortcut={Keyboard.Shortcut.Common.Edit} onAction={editConfig} />
+);
+
 function address(url: URL) {
 	return url.hostname.replace(/^www\./, "") + url.pathname.replace(/\/$/, "");
 }
@@ -100,6 +111,17 @@ export default function Links() {
 
 	return (
 		<List searchBarPlaceholder="Open in Brave...">
+			<List.EmptyView
+				title="No links"
+				description={`Add some to ${CONFIG}`}
+				icon={Icon.Globe01}
+				actions={
+					<ActionPanel>
+						<EditAction />
+					</ActionPanel>
+				}
+			/>
+
 			{containers.map((container) => (
 				<List.Section key={container ?? "-"} title={container === TEMPORARY ? "Temporary container" : (container ?? "Links")}>
 					{links
@@ -119,6 +141,7 @@ export default function Links() {
 									<ActionPanel>
 										<Action title="Open" icon={Icon.Globe01} onAction={() => launch(braveArgs(link))} />
 										<Action.CopyToClipboard title="Copy URL" content={link.url.toString()} />
+										<EditAction />
 									</ActionPanel>
 								}
 							/>
@@ -128,13 +151,29 @@ export default function Links() {
 
 			{(missing || problems.length > 0) && (
 				<List.Section title={`Problems in ${CONFIG}`}>
-					{missing && <List.Item title="No links file yet" subtitle={CONFIG} icon={Icon.Warning} />}
+					{missing && (
+						<List.Item
+							title="No links file yet"
+							subtitle={CONFIG}
+							icon={Icon.Warning}
+							actions={
+								<ActionPanel>
+									<EditAction />
+								</ActionPanel>
+							}
+						/>
+					)}
 					{problems.map((p) => (
 						<List.Item
 							key={p.line}
 							title={`Line ${p.line}: ${p.reason}`}
 							subtitle={p.text}
 							icon={Icon.Warning}
+							actions={
+								<ActionPanel>
+									<EditAction />
+								</ActionPanel>
+							}
 						/>
 					))}
 				</List.Section>

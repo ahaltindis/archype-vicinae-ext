@@ -10,6 +10,9 @@
 Lists the links in `~/.config/archype/links` with their favicons, grouped by container, and opens the chosen one
 in Brave. Open it directly with `vicinae deeplink vicinae://launch/@ahaltindis/archype/links`.
 
+Every item also has an "Edit Links" action (in the actions menu) that opens the file in `$EDITOR` (nvim when unset)
+in a terminal.
+
 One link per line, `#` starts a comment:
 
 ```
