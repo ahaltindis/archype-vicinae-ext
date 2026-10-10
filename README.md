@@ -61,8 +61,15 @@ tarball from the working tree instead of GitHub.
 
 ## Releasing
 
-1. Bump `version` in `package.json` and `pkgver` in `pkg/PKGBUILD`, commit.
-2. `git tag v<version> && git push --tags`. The release workflow builds the extension and attaches
+```
+./release.sh v0.1.1
+```
+
+From a clean, pushed `main`, it:
+
+1. Sets the version in `package.json` and `pkg/PKGBUILD`, commits and pushes.
+2. Creates and pushes the tag, then waits for the release workflow to build the extension and attach
    `archype-vicinae-ext-<version>.tar.gz` (and its `.sha256`) to a GitHub release.
-3. Put the checksum in `pkg/PKGBUILD`, then copy it to the AUR repo with a fresh `.SRCINFO`
-   (`makepkg --printsrcinfo > .SRCINFO`) and push.
+3. Puts the checksum in `pkg/PKGBUILD`, regenerates `pkg/.SRCINFO`, commits and pushes.
+4. Clones the AUR package to a temporary folder, copies `PKGBUILD`, `.SRCINFO` and the `.install` file there,
+   commits and pushes.
