@@ -29,7 +29,7 @@ tar -czf "pkg/$tarball" -C dist archype
 build=$(mktemp -d)
 trap 'rm -rf "$build"' EXIT
 cp "pkg/$tarball" pkg/$pkgname.install "$build/"
-sed "s|^source=.*|source=(\"$tarball\")|" pkg/PKGBUILD >"$build/PKGBUILD"
+sed -e "s|^source=.*|source=(\"$tarball\")|" -e "s|^sha256sums=.*|sha256sums=(SKIP)|" pkg/PKGBUILD >"$build/PKGBUILD"
 
 cd "$build"
 makepkg -si --noconfirm
